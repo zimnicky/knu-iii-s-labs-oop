@@ -8,5 +8,6 @@ QMAKE_CXXFLAGS += -std=c++11 -pedantic
 SOURCES += main.cpp
 
 HEADERS += \
-    avltree.h
+    avltree.h \
+    rbtree.h \
 

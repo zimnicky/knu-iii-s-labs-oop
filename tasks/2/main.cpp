@@ -1,5 +1,6 @@
 #include <iostream>
 #include "avltree.h"
+//#include "rbtree.h"
 
 using namespace std;
 
@@ -15,8 +16,8 @@ int main()
         int t = rand()%(n*10);
         cout << "add " << t << endl;
         tree.insert(t);
-//        tree.print();
-//        cout << "-----------" << endl;
+        tree.print();
+        cout << "-----------" << endl;
     }
     cout << endl;
     tree.print();
