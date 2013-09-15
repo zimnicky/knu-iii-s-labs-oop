@@ -8,5 +8,6 @@ QMAKE_CXXFLAGS += -std=c++11 -pedantic -errors
 SOURCES += main.cpp
 
 HEADERS += \
-    queue.h
+    queue.h \
+    menu.h
 

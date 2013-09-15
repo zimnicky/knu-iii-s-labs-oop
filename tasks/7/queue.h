@@ -17,6 +17,7 @@ class Queue
 public:
     enum class SortMethod{QSORT, INSERTION};
     Queue() { head = tail = nullptr; }
+    ~Queue(){ while (head != nullptr) pop();}
     void push(const Type &val);
     Type top() const { return (head == nullptr)? Type(): head->data;}
     void pop();
