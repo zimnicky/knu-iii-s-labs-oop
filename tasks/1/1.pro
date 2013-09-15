@@ -6,5 +6,9 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++11 -pedantic -errors
 
 SOURCES += \
-    main1.cpp
+    main.cpp \
+    task.cpp
+
+HEADERS += \
+    task.h
 
