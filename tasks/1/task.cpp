@@ -15,34 +15,38 @@ bool Task::Point::between(const Point &a, const Point &b) const
     }
 }
 
-void Task::Rectangle::read(istream &in)
+void Task::Rectangle::read(istream &in, set<Point> &points)
 {
     // read two coners of the rectangle
-    in >> points[0].x >> points[0].y >> points[2].x >> points[2].y;
+    Point tmpPoints[4];
+    in >> tmpPoints[0].x >> tmpPoints[0].y >> tmpPoints[2].x >> tmpPoints[2].y;
 
     //choose correct places of points
-    if (points[0].y < points[2].y)
-        swap(points[0].y, points[2].y);
-    if (points[0].x > points[2].x)
-        swap(points[0].x, points[2].x);
+    if (tmpPoints[0].y < tmpPoints[2].y)
+        swap(tmpPoints[0].y, tmpPoints[2].y);
+    if (tmpPoints[0].x > tmpPoints[2].x)
+        swap(tmpPoints[0].x, tmpPoints[2].x);
 
     //add other two coners
-    points[1].x = points[2].x;
-    points[1].y = points[0].y;
-    points[3].x = points[0].x;
-    points[3].y = points[2].y;
+    tmpPoints[1].x = tmpPoints[2].x;
+    tmpPoints[1].y = tmpPoints[0].y;
+    tmpPoints[3].x = tmpPoints[0].x;
+    tmpPoints[3].y = tmpPoints[2].y;
+
+    for (int i = 0; i < 4; i++)
+        this->points[i] = &(*points.insert(tmpPoints[i]).first); // pointer to new inserted element
 }
 
 bool Task::Rectangle::isNeighbor(Rectangle *rect) //checks if rects have common points
 {
-    bool outside = (points[0].x > rect->points[1].x) || (rect->points[0].x > points[1].x) || // x projections
-                   (points[3].y > rect->points[0].y) || (rect->points[3].y > points[0].y);   // y projections
+    bool outside = (points[0]->x > rect->points[1]->x) || (rect->points[0]->x > points[1]->x) || // x projections
+                   (points[3]->y > rect->points[0]->y) || (rect->points[3]->y > points[0]->y);   // y projections
 
-    bool firstInside = (points[0].x > rect->points[0].x) && (points[1].x < rect->points[1].x) &&
-                       (points[3].y > rect->points[3].y) && (points[0].y < rect->points[0].y);
+    bool firstInside = (points[0]->x > rect->points[0]->x) && (points[1]->x < rect->points[1]->x) &&
+                       (points[3]->y > rect->points[3]->y) && (points[0]->y < rect->points[0]->y);
 
-    bool secondInside = (rect->points[0].x > points[0].x) && (rect->points[1].x < points[1].x) &&
-                        (rect->points[3].y > points[3].y) && (rect->points[0].y < points[0].y);
+    bool secondInside = (rect->points[0]->x > points[0]->x) && (rect->points[1]->x < points[1]->x) &&
+                        (rect->points[3]->y > points[3]->y) && (rect->points[0]->y < points[0]->y);
 
     return !(outside || firstInside || secondInside);
 }
@@ -55,10 +59,7 @@ void Task::read(istream &in)
     for (int t = 0; t < count; t++)
     {
         rects[t] = new Rectangle();
-        rects[t]->read(in);
-
-        for (int i = 0; i < 4; i++)
-            points.insert(rects[t]->points[i]);
+        rects[t]->read(in, points);
     }
 }
 
@@ -78,17 +79,17 @@ void Task::intersectSegments(const Point &a, const Point &b, const Point &c, con
 
 void Task::intersectRects(Rectangle *a, Rectangle *b)
 {
-    intersectSegments(a->points[0], a->points[1],
-                      b->points[1], b->points[2]);
+    intersectSegments(*a->points[0], *a->points[1],
+                      *b->points[1], *b->points[2]);
 
-    intersectSegments(a->points[3], a->points[2],
-                      b->points[1], b->points[2]);
+    intersectSegments(*a->points[3], *a->points[2],
+                      *b->points[1], *b->points[2]);
 
-    intersectSegments(a->points[0], a->points[1],
-                      b->points[0], b->points[3]);
+    intersectSegments(*a->points[0], *a->points[1],
+                      *b->points[0], *b->points[3]);
 
-    intersectSegments(a->points[3], a->points[2],
-                      b->points[0], b->points[3]);
+    intersectSegments(*a->points[3], *a->points[2],
+                      *b->points[0], *b->points[3]);
 }
 
 void Task::findIntersections()
@@ -107,15 +108,15 @@ uint Task::countPointEdges()
         for (uint j = 0; j < rects.size(); j++)
         {
             for (uint t = 0; t < 4; t++)
-                if (i->between(rects[j]->points[t], rects[j]->points[(t+1)%4]))
+                if (i->between(*rects[j]->points[t], *rects[j]->points[(t+1)%4]))
                 {
                     /* t & 1: horizontal or vertical segment
                     *  t < 2(t >= 2): correct side (left-right or up-down),
                     *               last segment has opposite order of points
                     */
-                    if (*i != rects[j]->points[t])
+                    if (*i != *rects[j]->points[t])
                         toSide[t & 1][t >= 2] = true;
-                    if (*i != rects[j]->points[(t+1)%4])
+                    if (*i != *rects[j]->points[(t+1)%4])
                         toSide[t&1][t < 2] = true;
                 }
         }

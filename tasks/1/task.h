@@ -35,13 +35,13 @@ class Task
 
     struct Rectangle
     {
-        Point points[4];
+        const Point *points[4];
         int component; // number of connected component
         Rectangle(){
             memset(points, 0, sizeof points);
             component = -1;
         }
-        void read(istream &in);
+        void read(istream &in, set<Point> &points);
         bool isNeighbor(Rectangle *rect);
     };
 
