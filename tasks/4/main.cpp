@@ -7,14 +7,14 @@ int main()
 {
     float x0 = 0.5;
     float x1 = 1;
-    float y0 = 0;
-    float y1 = 2*x1 - 1;
     unsigned int count;
 
     cin >> count;
     cout << integrate(
                     [](float x, float y){return x*x + y*y;},
-                    x0, x1, y0, y1,
+                    x0, x1,
+                    [](float){return 0.f;},
+                    [](float x){return 2*x - 1;},
                     count
                 ) << endl;
 
