@@ -49,7 +49,6 @@ class Task
     vector<Rectangle*> rects;
     set<Point> points;
     set<Point> intersections;
-    vector<int> rect_colors;
 
     void addIntersection(int x, int y);
     void intersectSegments(const Point &a, const Point &b, const Point &c, const Point &d);

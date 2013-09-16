@@ -20,11 +20,13 @@ void Task::Rectangle::read(istream &in)
     // read two coners of the rectangle
     in >> points[0].x >> points[0].y >> points[2].x >> points[2].y;
 
+    //choose correct places of points
     if (points[0].y < points[2].y)
         swap(points[0].y, points[2].y);
     if (points[0].x > points[2].x)
         swap(points[0].x, points[2].x);
 
+    //add other two coners
     points[1].x = points[2].x;
     points[1].y = points[0].y;
     points[3].x = points[0].x;
@@ -34,15 +36,15 @@ void Task::Rectangle::read(istream &in)
 bool Task::Rectangle::isNeighbor(Rectangle *rect) //checks if rects have common points
 {
     bool outside = (points[0].x > rect->points[1].x) || (rect->points[0].x > points[1].x) || // x projections
-                   (points[3].y > rect->points[0].y) || (rect->points[3].y > points[0].y); // y projections
+                   (points[3].y > rect->points[0].y) || (rect->points[3].y > points[0].y);   // y projections
 
-    bool first_inside = (points[0].x > rect->points[0].x) && (points[1].x < rect->points[1].x) &&
-                        (points[3].y > rect->points[3].y) && (points[0].y < rect->points[0].y);
+    bool firstInside = (points[0].x > rect->points[0].x) && (points[1].x < rect->points[1].x) &&
+                       (points[3].y > rect->points[3].y) && (points[0].y < rect->points[0].y);
 
-    bool second_inside = (rect->points[0].x > points[0].x) && (rect->points[1].x < points[1].x) &&
-                         (rect->points[3].y > points[3].y) && (rect->points[0].y < points[0].y);
+    bool secondInside = (rect->points[0].x > points[0].x) && (rect->points[1].x < points[1].x) &&
+                        (rect->points[3].y > points[3].y) && (rect->points[0].y < points[0].y);
 
-    return !(outside || first_inside || second_inside);
+    return !(outside || firstInside || secondInside);
 }
 
 void Task::read(istream &in)
@@ -149,6 +151,7 @@ uint Task::solve()
 
     findIntersections();
     points.insert(intersections.begin(), intersections.end()); // add intersections to points
+
     E += (points.size() - V)*4; // add edges of intersections( 4 on each one)
     E /= 2; // remove doubles
     V = points.size(); // count points with intersections

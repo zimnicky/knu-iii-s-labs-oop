@@ -97,7 +97,7 @@ void menu()
             cout << " was removed" << endl;
         }
         else if (command == "top")
-             cout << cout << "last element: " << queue.top() << endl;
+             cout << "last element: " << queue.top() << endl;
         else if (command == "test")
             test();
 

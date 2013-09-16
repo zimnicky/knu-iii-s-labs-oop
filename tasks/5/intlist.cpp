@@ -122,7 +122,8 @@ IntList *IntList::splitByNumber(int number)
     }
 
     Node *tmp1 = tmp;
-    tmp = tmp->next();
+    if (tmp != nullptr)
+        tmp = tmp->next();
 
     while (tmp != nullptr)
     {

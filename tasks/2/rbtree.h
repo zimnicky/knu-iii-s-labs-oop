@@ -165,6 +165,11 @@ private:
         root->color = BLACK;
     }
 
+    void balanceAfterDelete(Node *x)
+    {
+
+    }
+
     void insertNode(Type key)
     {
         Node *current = root, *parent = nullptr, *node;
@@ -181,6 +186,53 @@ private:
         node = createChild(key, parent); //insert
 
         balance(node);
+    }
+
+    Node * removeMin(Node *t) // removes minimal value from tree
+    {
+        if (t->left == nullptr) return t->right;
+        t->left = removeMin(t->left);
+
+        balance(t);
+        return t;
+    }
+
+    Node * deleteNode(Node *t, Type val)
+    {
+        if (t == nullptr) return t;
+
+        if (val == t->key)
+        {
+            if (t->left == nil || t->right == nil) // has only one child
+            {
+               Node *child;
+               if (t->left == nil)
+                   child = t->right;
+                else
+                   child = t->left;
+
+                if (t->color == BLACK)
+                    balanceAfterDelete(child);
+
+                delete t;
+                return child;
+            }
+
+            // has two children
+            Node *pred = t->right;
+            while (pred->left != nil) // find node with nil-child
+                pred = pred->left;
+
+            t->key = pred->key;
+            val = pred->key; // change searched node
+        }
+
+        if (val < t->key)
+            t->left = deleteNode(t->left, val);
+        else
+            t->right = deleteNode(t->right, val);
+
+        return t;
     }
 
 
@@ -250,7 +302,7 @@ public:
     }
     void remove(Type val)
     {
-        //root = deleteNode(root, val);
+        root = deleteNode(root, val);
     }
     void print()
     {
