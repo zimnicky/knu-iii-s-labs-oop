@@ -6,8 +6,10 @@ CONFIG -= qt
 QMAKE_CXXFLAGS += -std=c++11 -pedantic -errors
 
 SOURCES += main.cpp \
-    gradientdescent.cpp
+    gradientdescent.cpp \
+    matrix.cpp
 
 HEADERS += \
-    gradientdescent.h
+    gradientdescent.h \
+    matrix.h
 
