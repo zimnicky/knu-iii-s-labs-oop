@@ -4,8 +4,8 @@
 vector<vector<uint>> GraphTask18::fundamentalCycles()
 {
 	vector<vector<uint>> res;
-	vector<list<uint>> vertexCopies = vertexes;
-	vector<bool> visited(vertexes.size(), false);
+	vector<list<uint>> vertexCopies = vertices;
+	vector<bool> visited(vertices.size(), false);
 
 	list<int> st; // it is a stack, but it uses a list to be able to read it
 	st.push_back(0);

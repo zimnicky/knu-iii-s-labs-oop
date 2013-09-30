@@ -4,8 +4,8 @@
 vector<uint> GraphTask15::shortestPath(uint from, uint to)
 {
     queue<pair<uint, uint>> q; // pair<vertex, length of path>
-    vector<bool> visited(vertexes.size());      // visited vertexes
-    vector<uint> prev(vertexes.size());         // previous vertex in path
+    vector<bool> visited(vertices.size());      // visited vertices
+    vector<uint> prev(vertices.size());         // previous vertex in path
 
     bool finished = false;
     q.push(make_pair(to, 0u)); // go from the end(for easier search of path)
@@ -14,7 +14,7 @@ vector<uint> GraphTask15::shortestPath(uint from, uint to)
     {
         uint v = q.front().first;
         uint step = q.front().second;
-        for (auto edge: vertexes[v]) // add all connected vertexes to the queue
+        for (auto edge: vertices[v]) // add all connected vertices to the queue
         {
             uint t = ((uint)edges[edge].from == v)? edges[edge].to: edges[edge].from;
 

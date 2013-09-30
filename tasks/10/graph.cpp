@@ -4,15 +4,15 @@ void Graph::addIncedenceRelation(uint edgeNum, uint vertexNum)
 {
     if (edges.size() <= edgeNum)
         edges.resize(edgeNum + 1);
-    if (vertexes.size() <= vertexNum)
-        vertexes.resize(vertexNum + 1);
+	if (vertices.size() <= vertexNum)
+		vertices.resize(vertexNum + 1);
 
     if (edges[edgeNum].from < 0)
         edges[edgeNum].from = vertexNum;
     else
         edges[edgeNum].to = vertexNum;
 
-    vertexes[vertexNum].push_back(edgeNum);
+	vertices[vertexNum].push_back(edgeNum);
 
 }
 
@@ -20,10 +20,10 @@ vector<uint> Graph::eulerianPath()
 {
     int startV = -1;
 
-    vector<list<uint>> vertexCopies = vertexes;
+	vector<list<uint>> vertexCopies = vertices;
 
-    for (uint i = 0; i < vertexes.size() && startV == -1; i++)
-        if ((vertexes[i].size() & 1) == 0)
+	for (uint i = 0; i < vertices.size() && startV == -1; i++)
+		if ((vertices[i].size() & 1) == 0)
             startV = i;
 
     stack<int> st;

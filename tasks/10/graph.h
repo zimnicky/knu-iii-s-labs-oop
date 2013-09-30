@@ -19,13 +19,13 @@ protected:
         Edge(int f = -1, int t = -1):from(f), to(t), deleted(false){}
     };
 
-    vector<list<uint>> vertexes; // adjacency list,  vertex: numbers of edges
+	vector<list<uint>> vertices; // adjacency list,  vertex: numbers of edges
     vector<Edge> edges;
 
 public:
     Graph(){}
 
-    uint countVertexes()const {return vertexes.size();}
+	uint countVertices()const {return vertices.size();}
     uint countEdges() const {return edges.size();}
 
     void addIncedenceRelation(uint edgeNum, uint vertexNum); // adds relation between edge & vertex
