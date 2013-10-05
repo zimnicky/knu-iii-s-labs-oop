@@ -2,18 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <dlfcn.h>
 
 using namespace std;
-
-int f(int x, int y, int r)
-{
-    return x*x + y*y - r*r;
-}
-
-int Fst(int x, int y, int r)
-{
-    return f(x+1,y,r) + f(x,y-1,r); // sign is the same as sign of middle point
-}
 
 struct Circle
 {
@@ -26,56 +17,15 @@ struct Circle
     int x, y, r;
 };
 
-void drawCircle(int posX, int posY, int r, Display *display, Drawable &drawable, GC &gc)
-{
-    int x = 0;
-    int y = r;
-    /* Si & Ti -- the nearest integer point to the circle
-     * Qi -- middle point between Si & Ti
-     *    ____Ti
-     *   | \  |
-     *   |__\_|
-     *   Si
-    */
+typedef void (*DrawCirclesFunc)(Circle *, int, Display *, Drawable &, GC &);
+typedef void (*DrawCircleFunc)(int, int,int, Display *, Drawable &, GC &);
 
-    //build quarter of circle
-    while (y >= 0)
-    {
-        //circle is symmetric, draw 4 points(one in each quarter)
-        XDrawPoint(display, drawable, gc, posX + x, posY + y);
-        XDrawPoint(display, drawable, gc, posX - x, posY - y);
-        XDrawPoint(display, drawable, gc, posX + x, posY - y);
-        XDrawPoint(display, drawable, gc, posX - x, posY + y);
-
-        //Choose point. If middle point is inside -- S, else  -- T
-        if (Fst(x,y,r) < 0)
-            x++;
-        else
-            y--;
-    }
-}
-
-void drawCircles(Circle *circles, int count, Display *display, Drawable &drawable, GC &gc)
-{
-    for (int i = 0; i < count; i++)
-    {
-        drawCircle(circles[i].x, circles[i].y, circles[i].r, display, drawable, gc);
-    }
-}
+DrawCircleFunc drawCircle;
+DrawCirclesFunc drawCircles;
 
 inline int sqr(int x)
 {
     return x*x;
-}
-
-void redraw(Display *display, Window &window, GC &gc, vector<Circle> &circles)
-{
-    XWindowAttributes attributes;
-    XSetForeground(display, gc, 0xFFFFFF);
-    XGetWindowAttributes(display, window, &attributes);
-    XFillRectangle(display, window, gc, 0, 0, attributes.width, attributes.height);
-    XSetForeground(display, gc, 0);
-    drawCircles(circles.data(), circles.size(), display, window, gc);
 }
 
 void initWindow(Display *&display, Window &window, GC &gc)
@@ -101,17 +51,35 @@ void initWindow(Display *&display, Window &window, GC &gc)
 
 }
 
+void redraw(Display *display, Window &window, GC &gc, vector<Circle> &circles, void* lib)
+{
+    XWindowAttributes attributes;
+    XSetForeground(display, gc, 0xFFFFFF);
+    XGetWindowAttributes(display, window, &attributes);
+    XFillRectangle(display, window, gc, 0, 0, attributes.width, attributes.height);
+    XSetForeground(display, gc, 0);
+    drawCircles(circles.data(), circles.size(), display, window, gc);
+}
+
 int main()
 {
-	Display *display;
-	Window window;
-	GC gc;
+    void* lib = dlopen("./lib2lib.so", RTLD_NOW);
+    if (!lib)
+    {
+        fprintf(stderr,"dlopen() error: %s\n", dlerror());
+        return 1;
+    };
+
+    drawCircle = (DrawCircleFunc)dlsym(lib, "drawCircle");
+    drawCircles = (DrawCirclesFunc)dlsym(lib,"drawCircles");
+
+    Display *display;
+    Window window;
+    GC gc;
 
     initWindow(display, window, gc);
 
     XEvent event;
-
-
 
     vector<Circle> circles;
     XPoint newCenter;       // center of new circle
@@ -131,7 +99,7 @@ int main()
                     else if(event.xbutton.button ==  Button3)
                     {
                         newCircle = false;
-                        redraw(display, window, gc, circles);
+                        redraw(display, window, gc, circles, lib);
                     }
                     break;
             }
@@ -155,12 +123,12 @@ int main()
                     int r = sqr(x-newCenter.x) + sqr(y-newCenter.y);
                     r = sqrt(r);
 
-                    redraw(display, window, gc, circles);
+                    redraw(display, window, gc, circles, lib);
                     drawCircle(newCenter.x, newCenter.y, r, display, window, gc);
                 }
                 break;
             case Expose:
-                    redraw(display, window, gc, circles);
+                    redraw(display, window, gc, circles, lib);
                     break;
             }
             default:
@@ -170,5 +138,6 @@ int main()
 
 	XFreeGC(display, gc);
 	XCloseDisplay(display);
+    dlclose(lib);
 	return 0;
 }
