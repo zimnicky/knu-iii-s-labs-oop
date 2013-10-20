@@ -115,7 +115,7 @@ vector<double> GradientDescent::extremum(const vector<double> &start_point, cons
             mat = mat.transpose() * (mat * mat.transpose()).inverse() * mat;
             mat = Matrix::E(mat.size().first) - mat;
 
-            mat = mat * gr;
+            mat = Matrix(gr) * mat;
         }
         else
             mat = gr; // use gradient
