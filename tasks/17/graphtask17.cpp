@@ -35,11 +35,11 @@ vector<uint> GraphTask17::topsort()
 			}
 		}
 
-	vector<uint> order;
-	for (uint v: res)		//reverse result
-		order.push_back(v);
+    vector<uint> order;
+    for (int i = res.size() - 1; i >= 0; i--)		//reverse result
+        order.push_back(res[i]);
 
-	return order;
+    return order;
 }
 
 vector<vector<uint>> GraphTask17::bicomponents()
@@ -63,12 +63,12 @@ vector<vector<uint>> GraphTask17::bicomponents()
 			while (!st.empty())
 			{
 				uint top = st.top();
-				for(uint e: vertices[top])
+                for(uint e: redges[top])
 				{
-					if (!visited[edges[e].to])
+                    if (!visited[edges[e].from])
 					{
-						visited[edges[e].to] = true; // use edge
-						st.push(edges[e].to);
+                        visited[edges[e].from] = true; // use edge
+                        st.push(edges[e].from);
 						break;
 					}
 				}
@@ -90,13 +90,20 @@ vector<vector<uint>> GraphTask17::bicomponents()
 void GraphTask17::addEdge(uint v1, uint v2)
 {
 	if (v1 >= vertices.size())
+    {
 		vertices.resize(v1+1);
+        redges.resize(v1+1);
+    }
 	if (v2 >= vertices.size())
+    {
 		vertices.resize(v2+1);
+        redges.resize(v2+1);
+    }
 
 	Edge e(v1,v2);
 
 	edges.push_back(e);
 
 	vertices[v1].push_back(edges.size() - 1);
+    redges[v2].push_back(edges.size() - 1);
 }

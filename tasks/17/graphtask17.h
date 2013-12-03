@@ -6,14 +6,16 @@
 
 class GraphTask17: public Graph
 {
+protected:
+    vector<list<uint>>  redges;   // reversed edges for each vertex
 public:
 	GraphTask17():Graph(){}
 
 	void addEdge(uint v1, uint v2);
 
-	vector<uint> topsort(); // topological sorting
+    virtual vector<uint> topsort(); // topological sorting
 
-	vector<vector<uint>> bicomponents(); // returns bicomponents of this graph
+    virtual vector<vector<uint>> bicomponents(); // returns bicomponents of this graph
 };
 
 #endif // GRAPHTASK17_H
