@@ -1,16 +1,16 @@
 #include <iostream>
-//#include "avltree.h"
-#include "rbtree.h"
+#include "avltree.h"
+//#include "rbtree.h"
 
 using namespace std;
 
 int main()
 {
-    freopen("input.txt","r",stdin);
+    freopen("input","r",stdin);
     freopen("output.txt","w",stdout);
     int n;
     cin >> n;
-    RBTree<int> tree;
+    AvlTree<int> tree;
     for (int i = 0; i< n; i++)
     {
         int t = rand()%(n*10);
@@ -49,6 +49,8 @@ int main()
     for (int i = 1; i< n; i+=2)
     {
         tree.remove(i);
+        cout << "remove " << i << endl;
+        tree.print();
     }
 
     tree.print();
